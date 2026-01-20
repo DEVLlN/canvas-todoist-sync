@@ -1,5 +1,7 @@
 # Canvas to Todoist Sync
 
+[![Sync Status](https://github.com/DEVLlN/canvas-todoist-sync/actions/workflows/sync.yml/badge.svg)](https://github.com/DEVLlN/canvas-todoist-sync/actions/workflows/sync.yml)
+
 Automatically sync your Canvas LMS assignments to Todoist tasks. This tool:
 
 - Fetches assignments from your Canvas calendar feed (ICS format)

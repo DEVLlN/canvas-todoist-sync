@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas to Todoist Sync - Setup</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2rem;
+        }
+        .subtitle {
+            color: rgba(255,255,255,0.9);
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        .step {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid #eee;
+        }
+        .step:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        .step-number {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        .step-content {
+            flex: 1;
+        }
+        .step-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        .step-desc {
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #333;
+        }
+        .btn-green {
+            background: #10b981;
+            color: white;
+        }
+        .input-group {
+            margin: 15px 0;
+        }
+        .input-group label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 6px;
+            color: #444;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .helper {
+            font-size: 0.85rem;
+            color: #888;
+            margin-top: 6px;
+        }
+        .helper a {
+            color: #667eea;
+        }
+        .complete-section {
+            text-align: center;
+            padding: 20px;
+        }
+        .complete-section h3 {
+            color: #10b981;
+            margin-bottom: 10px;
+        }
+        .hidden {
+            display: none;
+        }
+        .repo-name-input {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .repo-name-input span {
+            color: #666;
+            white-space: nowrap;
+        }
+        .time-estimate {
+            background: #f0f9ff;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            color: #0369a1;
+            font-size: 0.9rem;
+        }
+        .checklist {
+            list-style: none;
+            margin: 10px 0;
+        }
+        .checklist li {
+            padding: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .checklist li::before {
+            content: "○";
+            color: #ccc;
+            font-size: 1.2rem;
+        }
+        .checklist li.done::before {
+            content: "✓";
+            color: #10b981;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Canvas to Todoist Sync</h1>
+        <p class="subtitle">Automatically sync your assignments in 3 steps</p>
+
+        <div class="card">
+            <div class="time-estimate">
+                ⏱️ Takes about 3 minutes to set up
+            </div>
+
+            <!-- Step 1 -->
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <div class="step-title">Create Your Copy</div>
+                    <p class="step-desc">Click the button below to create your own copy of this tool on GitHub.</p>
+                    <a href="https://github.com/DEVLlN/canvas-todoist-sync/generate" target="_blank" class="btn btn-primary">
+                        Create My Copy →
+                    </a>
+                    <p class="helper">You'll need a free <a href="https://github.com/signup" target="_blank">GitHub account</a></p>
+                </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <div class="step-title">Get Your Credentials</div>
+                    <p class="step-desc">You'll need two things:</p>
+
+                    <div class="input-group">
+                        <label>Canvas Calendar URL</label>
+                        <input type="text" id="canvas-url" placeholder="https://your-school.instructure.com/feeds/calendars/...">
+                        <p class="helper">
+                            <a href="https://community.canvaslms.com/t5/Canvas-Basics-Guide/How-do-I-view-the-Calendar-iCal-feed-to-subscribe-to-an-external/ta-p/46" target="_blank">How to find this →</a>
+                            (Canvas → Calendar → Calendar Feed)
+                        </p>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Todoist API Token</label>
+                        <input type="password" id="todoist-token" placeholder="Your API token">
+                        <p class="helper">
+                            <a href="https://todoist.com/prefs/integrations" target="_blank">Get it here →</a>
+                            (Scroll to "API token")
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <div class="step-title">Add Secrets to GitHub</div>
+                    <p class="step-desc">In your new repository:</p>
+                    <ol style="color: #666; font-size: 0.95rem; line-height: 1.8; padding-left: 20px;">
+                        <li>Go to <strong>Settings</strong> → <strong>Secrets and variables</strong> → <strong>Actions</strong></li>
+                        <li>Click <strong>New repository secret</strong></li>
+                        <li>Add <code>CANVAS_ICS_URL</code> with your Canvas URL</li>
+                        <li>Add <code>TODOIST_API_TOKEN</code> with your token</li>
+                        <li>Go to <strong>Actions</strong> tab and click <strong>Run workflow</strong></li>
+                    </ol>
+                    <br>
+                    <a href="#" onclick="openSecretsPage()" class="btn btn-secondary">
+                        Open My Repo Settings
+                    </a>
+                    <div class="input-group" style="margin-top: 15px;">
+                        <label>Your GitHub Username</label>
+                        <input type="text" id="github-username" placeholder="username">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card complete-section">
+            <h3>🎉 That's it!</h3>
+            <p style="color: #666;">Your assignments will sync to Todoist every hour automatically.</p>
+        </div>
+    </div>
+
+    <script>
+        function openSecretsPage() {
+            const username = document.getElementById('github-username').value.trim();
+            if (!username) {
+                alert('Please enter your GitHub username first');
+                return;
+            }
+            window.open(`https://github.com/${username}/canvas-todoist-sync/settings/secrets/actions`, '_blank');
+        }
+
+        // Save inputs to localStorage
+        document.querySelectorAll('input').forEach(input => {
+            const saved = localStorage.getItem(input.id);
+            if (saved && input.type !== 'password') input.value = saved;
+
+            input.addEventListener('input', () => {
+                if (input.type !== 'password') {
+                    localStorage.setItem(input.id, input.value);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

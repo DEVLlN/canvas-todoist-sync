@@ -8,9 +8,9 @@ on:
   # Allow manual trigger
   workflow_dispatch:
 
-  # Run on push to main for testing
+  # Run on push to master for testing
   push:
-    branches: [main]
+    branches: [master]
     paths:
       - 'sync.py'
       - 'requirements.txt'

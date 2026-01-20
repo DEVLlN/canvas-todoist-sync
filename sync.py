@@ -4,6 +4,8 @@ Canvas to Todoist Sync
 
 Synchronizes Canvas LMS assignments from an ICS calendar feed to Todoist tasks.
 Handles deduplication, updates, and organizes tasks with labels by course.
+
+Runs hourly via GitHub Actions.
 """
 
 import hashlib

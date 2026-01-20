@@ -31,10 +31,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Configuration
-CANVAS_ICS_URL = os.environ.get(
-    "CANVAS_ICS_URL",
-    "https://utk.instructure.com/feeds/calendars/user_Q2yQkqv8jyuLZY6zzk7rBMkut8BLhPB60sY6pZ4b.ics",
-)
+CANVAS_ICS_URL = os.environ.get("CANVAS_ICS_URL", "")
 TODOIST_API_TOKEN = os.environ.get("TODOIST_API_TOKEN", "")
 PROJECT_NAME = os.environ.get("TODOIST_PROJECT_NAME", "Canvas Assignments")
 STATE_FILE = os.environ.get("STATE_FILE", "sync_state.json")

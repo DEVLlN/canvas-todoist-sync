@@ -1,0 +1,56 @@
+name: Canvas to Todoist Sync
+
+on:
+  # Run every hour
+  schedule:
+    - cron: '0 * * * *'
+
+  # Allow manual trigger
+  workflow_dispatch:
+
+  # Run on push to main for testing
+  push:
+    branches: [main]
+    paths:
+      - 'sync.py'
+      - 'requirements.txt'
+      - '.github/workflows/sync.yml'
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Restore sync state
+        uses: actions/cache@v4
+        with:
+          path: sync_state.json
+          key: sync-state-${{ github.run_id }}
+          restore-keys: |
+            sync-state-
+
+      - name: Run sync
+        env:
+          TODOIST_API_TOKEN: ${{ secrets.TODOIST_API_TOKEN }}
+          CANVAS_ICS_URL: ${{ secrets.CANVAS_ICS_URL }}
+          TODOIST_PROJECT_NAME: "Canvas Assignments"
+        run: python sync.py
+
+      - name: Save sync state
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: sync_state.json
+          key: sync-state-${{ github.run_id }}

@@ -14,13 +14,16 @@ import logging
 import os
 import re
 import sys
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Optional
 
 import requests
 from icalendar import Calendar
 from todoist_api_python.api import TodoistAPI
+
+# Reminder settings
+REMINDER_DAYS_BEFORE = int(os.environ.get("REMINDER_DAYS_BEFORE", "1"))  # Days before due date
 
 # Configure logging
 logging.basicConfig(
@@ -74,13 +77,19 @@ class SyncState:
         """Get info about a previously synced event."""
         return self.state["synced_events"].get(event_uid)
 
-    def mark_synced(self, event_uid: str, todoist_task_id: str, event_hash: str):
+    def mark_synced(self, event_uid: str, todoist_task_id: str, event_hash: str, due_date: str = None):
         """Mark an event as synced."""
         self.state["synced_events"][event_uid] = {
             "todoist_task_id": todoist_task_id,
             "event_hash": event_hash,
             "synced_at": datetime.now(timezone.utc).isoformat(),
+            "due_date": due_date,
         }
+
+    def mark_completed(self, event_uid: str):
+        """Mark an event as auto-completed (remove from tracking)."""
+        if event_uid in self.state["synced_events"]:
+            del self.state["synced_events"][event_uid]
 
     def get_all_synced_uids(self) -> set:
         """Get all synced event UIDs."""
@@ -216,6 +225,7 @@ class TodoistSync:
 
     def __init__(self, api_token: str):
         self.api = TodoistAPI(api_token)
+        self.api_token = api_token
         self._projects_cache = None
         self._labels_cache = None
 
@@ -334,6 +344,51 @@ class TodoistSync:
         except Exception:
             return False
 
+    def complete_task(self, task_id: str) -> bool:
+        """Mark a task as complete. Returns True if successful."""
+        try:
+            self.api.close_task(task_id=task_id)
+            logger.info(f"Completed task: {task_id}")
+            return True
+        except Exception as e:
+            logger.warning(f"Could not complete task {task_id}: {e}")
+            return False
+
+    def add_reminder(self, task_id: str, remind_at: datetime) -> bool:
+        """Add a reminder to a task using the Sync API."""
+        try:
+            # Use Todoist Sync API for reminders (REST API doesn't support them)
+            import uuid
+            temp_id = str(uuid.uuid4())
+
+            # Format the reminder time
+            remind_str = remind_at.strftime("%Y-%m-%dT%H:%M:%S")
+
+            response = requests.post(
+                "https://api.todoist.com/sync/v9/sync",
+                headers={"Authorization": f"Bearer {self.api_token}"},
+                json={
+                    "commands": [
+                        {
+                            "type": "reminder_add",
+                            "temp_id": temp_id,
+                            "uuid": str(uuid.uuid4()),
+                            "args": {
+                                "item_id": task_id,
+                                "due": {"date": remind_str},
+                            },
+                        }
+                    ]
+                },
+                timeout=30,
+            )
+            response.raise_for_status()
+            logger.info(f"Added reminder for task {task_id} at {remind_str}")
+            return True
+        except Exception as e:
+            logger.warning(f"Could not add reminder for task {task_id}: {e}")
+            return False
+
 
 def sync_canvas_to_todoist():
     """Main sync function."""
@@ -371,7 +426,28 @@ def sync_canvas_to_todoist():
     project_id = todoist.get_or_create_project(PROJECT_NAME)
 
     # Process each event
-    stats = {"created": 0, "updated": 0, "skipped": 0}
+    stats = {"created": 0, "updated": 0, "skipped": 0, "completed": 0}
+
+    # Get current event UIDs for auto-complete detection
+    current_event_uids = {event["uid"] for event in events}
+
+    # Check for assignments that disappeared (likely submitted)
+    for event_uid in list(state.get_all_synced_uids()):
+        if event_uid not in current_event_uids:
+            synced_info = state.get_synced_event(event_uid)
+            if synced_info and synced_info.get("due_date"):
+                try:
+                    due_date = datetime.fromisoformat(synced_info["due_date"])
+                    # If due date is still in the future, assignment was likely submitted
+                    if due_date > datetime.now(timezone.utc):
+                        task_id = synced_info["todoist_task_id"]
+                        if todoist.task_exists(task_id):
+                            logger.info(f"Assignment disappeared from Canvas (likely submitted), completing task: {task_id}")
+                            if todoist.complete_task(task_id):
+                                stats["completed"] += 1
+                        state.mark_completed(event_uid)
+                except (ValueError, TypeError) as e:
+                    logger.debug(f"Could not parse due date for {event_uid}: {e}")
 
     for event in events:
         event_uid = event["uid"]
@@ -398,7 +474,7 @@ def sync_canvas_to_todoist():
                     description=event["description"],
                     priority=event["priority"],
                 )
-                state.mark_synced(event_uid, synced_info["todoist_task_id"], event_hash)
+                state.mark_synced(event_uid, synced_info["todoist_task_id"], event_hash, event["due_date"])
                 stats["updated"] += 1
                 continue
 
@@ -417,7 +493,15 @@ def sync_canvas_to_todoist():
                 labels=[course_label],
                 priority=event["priority"],
             )
-            state.mark_synced(event_uid, task_id, event_hash)
+
+            # Add reminder for 1 day before due date
+            if REMINDER_DAYS_BEFORE > 0:
+                reminder_time = event["due_datetime"] - timedelta(days=REMINDER_DAYS_BEFORE)
+                # Only add reminder if it's in the future
+                if reminder_time > datetime.now(timezone.utc):
+                    todoist.add_reminder(task_id, reminder_time)
+
+            state.mark_synced(event_uid, task_id, event_hash, event["due_date"])
             stats["created"] += 1
         except Exception as e:
             logger.error(f"Failed to create task for {event['title']}: {e}")
@@ -431,6 +515,7 @@ def sync_canvas_to_todoist():
     logger.info(f"  Created: {stats['created']}")
     logger.info(f"  Updated: {stats['updated']}")
     logger.info(f"  Skipped: {stats['skipped']}")
+    logger.info(f"  Auto-completed: {stats['completed']}")
     logger.info("=" * 50)
 
 

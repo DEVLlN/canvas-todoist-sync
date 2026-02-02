@@ -20,7 +20,9 @@ Automatically sync your Canvas LMS assignments to Todoist tasks. This tool:
 - Creates Todoist tasks with proper due dates
 - Organizes assignments with labels by course name
 - Sets priority based on how soon assignments are due
-- Runs automatically every hour via GitHub Actions
+- **Adds reminders** 1 day before each due date
+- **Auto-completes tasks** when you submit assignments in Canvas
+- Runs automatically every 5 minutes via GitHub Actions
 - Tracks synced assignments to prevent duplicates
 
 ## Quick Start (GitHub Actions)
@@ -65,7 +67,7 @@ Or click "Use this template" / "Fork" on GitHub.
 
 1. Go to the **Actions** tab in your repository
 2. Click **I understand my workflows, go ahead and enable them**
-3. The sync will now run automatically every hour
+3. The sync will now run automatically every 5 minutes
 
 ### 6. Test It
 
@@ -100,6 +102,24 @@ The sync tracks assignments by their unique Canvas ID to prevent duplicates:
 - Changed assignments (title, due date, description) are updated
 - Already-synced, unchanged assignments are skipped
 - Past assignments are ignored
+
+### Auto-Reminders
+
+Every task automatically gets a Todoist reminder **1 day before** the due date. This ensures you get notified before assignments are due.
+
+- Reminders are only added if the reminder time is in the future
+- Configurable via `REMINDER_DAYS_BEFORE` environment variable
+
+### Auto-Complete Detection
+
+When you submit an assignment in Canvas, it disappears from your calendar feed. The sync detects this and **automatically marks the corresponding Todoist task as complete**.
+
+How it works:
+1. Assignment is synced to Todoist
+2. You submit the assignment in Canvas
+3. Assignment disappears from Canvas calendar feed
+4. Next sync detects it's missing (but due date is still future)
+5. Todoist task is automatically completed
 
 ## Local Development
 
@@ -143,6 +163,7 @@ Set these as environment variables or GitHub secrets:
 | `TODOIST_API_TOKEN` | Yes | - | Your Todoist API token |
 | `CANVAS_ICS_URL` | Yes | - | Your Canvas calendar feed URL |
 | `TODOIST_PROJECT_NAME` | No | `Canvas Assignments` | Name of Todoist project |
+| `REMINDER_DAYS_BEFORE` | No | `1` | Days before due date to set reminder (0 to disable) |
 | `STATE_FILE` | No | `sync_state.json` | Path to state tracking file |
 
 ## Customization

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://devlln.github.io/canvas-todoist-sync/sitemap.xml

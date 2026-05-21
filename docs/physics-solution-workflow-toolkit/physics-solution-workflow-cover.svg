@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1600" viewBox="0 0 1600 1600" role="img" aria-labelledby="title desc">
+  <title id="title">Physics Solution Workflow Toolkit Cover</title>
+  <desc id="desc">A square product cover for a physics and math solution workflow toolkit.</desc>
+  <rect width="1600" height="1600" fill="#f7f4ef"/>
+  <rect x="104" y="104" width="1392" height="1392" rx="28" fill="#ffffff" stroke="#111827" stroke-width="5"/>
+  <rect x="104" y="104" width="1392" height="184" rx="28" fill="#243b53"/>
+  <rect x="104" y="222" width="1392" height="66" fill="#243b53"/>
+  <text x="168" y="218" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="72" font-weight="700">Physics Solution</text>
+  <text x="168" y="394" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-size="118" font-weight="700">Workflow</text>
+  <text x="168" y="510" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-size="106" font-weight="700">Toolkit</text>
+  <text x="174" y="590" fill="#374151" font-family="Arial, Helvetica, sans-serif" font-size="44">Markdown templates, checks, and worked examples</text>
+  <circle cx="1300" cy="444" r="112" fill="#0f766e"/>
+  <text x="1244" y="472" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="72" font-weight="700">$5</text>
+
+  <g fill="none" stroke="#111827" stroke-width="5">
+    <rect x="168" y="704" width="1264" height="178" rx="18"/>
+    <rect x="168" y="930" width="1264" height="178" rx="18"/>
+    <rect x="168" y="1156" width="1264" height="178" rx="18"/>
+  </g>
+  <g fill="#111827" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="700">
+    <text x="224" y="772">1. Setup</text>
+    <text x="224" y="998">2. Derive</text>
+    <text x="224" y="1224">3. Check</text>
+  </g>
+  <g fill="#4b5563" font-family="Arial, Helvetica, sans-serif" font-size="34">
+    <text x="224" y="832">Given, find, assumptions, coordinates, and governing equations</text>
+    <text x="224" y="1058">Defined symbols, display math, and no skipped algebra</text>
+    <text x="224" y="1284">Units, limits, symmetry, conservation, and spot-checks</text>
+  </g>
+  <text x="168" y="1428" fill="#111827" font-family="Arial, Helvetica, sans-serif" font-size="42">Includes templates, audit rubric, and five worked examples.</text>
+</svg>
